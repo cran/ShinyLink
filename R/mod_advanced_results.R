@@ -56,7 +56,7 @@ mod_advanced_results_ui <- function(id){
 }
 
 #' advanced_results Server Functions
-#' @import fastLink ggplot2 ggvenn
+#' @import fastLink
 #' @noRd
 mod_advanced_results_server <- function(id, state, session){
   moduleServer( id, function(input, output, session){
@@ -394,7 +394,7 @@ mod_advanced_results_server <- function(id, state, session){
         class = 'compact hover row-border nowrap stripe'
 
       )
-    }, server = FALSE)
+    }, server = TRUE)
 
     output[["info-main"]] <- renderText({
       capture.output(input[["matched_rows_selected"]])
@@ -407,6 +407,9 @@ mod_advanced_results_server <- function(id, state, session){
       matched_values()[['matched_summary']]
     })
     output[["plot-summary"]] <- renderPlot({
+      if (!requireNamespace("ggplot2", quietly = TRUE)) {
+        stop("Package 'ggplot2' is required for plotting. Please install it.")
+      }
       plot_summary <- matched_values()[['matched_summary']]
 
       plot_summary <-
@@ -428,7 +431,9 @@ mod_advanced_results_server <- function(id, state, session){
     })
 
     output[["plot-venn"]] <- renderPlot({
-
+      if (!requireNamespace("ggvenn", quietly = TRUE)) {
+        stop("Package 'ggvenn' is required for plotting. Please install it.")
+      }
       n_dfA.unmatch <- nrow(matched_values()[['dfA.unmatch']])
       n_dfB.unmatch <- nrow(matched_values()[['dfB.unmatch']])
       n_match <- nrow(matched_values()[['Dat']])
@@ -437,7 +442,9 @@ mod_advanced_results_server <- function(id, state, session){
         Sample = c((1:n_dfA.unmatch)+3e9, 1:n_match),
         Matching = c(-(1:n_dfB.unmatch) + 5e7, 1:n_match)
       )
-      names(x) <- c("Sample Dataset", "Matching Dataset")
+      if (length(names(x)) == 2) {
+        names(x) <- c("Sample Data", "Matching Data")
+      }
       ggvenn::ggvenn(x)
     })
     # Download selected rows --------------------------------------------------

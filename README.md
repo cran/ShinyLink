@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/ShinyLink)](https://cran.r-project.org/package=ShinyLink)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
@@ -49,7 +51,7 @@ Launch R and run these commands to install
 if(!require(httpuv)) install.packages("httpuv")
 if(!require(devtools)) install.packages("devtools")
 
-devtools::install_github("nelson-sci-labs/ShinyLink",dependencies=TRUE)
+devtools::install_github("cdc-addm/ShinyLink",dependencies=TRUE)
 ```
 
 ### Start using ShinyLink

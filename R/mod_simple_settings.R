@@ -32,7 +32,7 @@ mod_simple_settings_ui <- function(id){
           "House Number",
           "Street Name",
           "City",
-          "Year of Birth"
+          "SSN"
         ),
         choiceValues = c(
           "firstname",
@@ -44,13 +44,13 @@ mod_simple_settings_ui <- function(id){
           "housenum",
           "streetname",
           "city",
-          "birthyear"
+          "SSN"
         ),
         selected = c(
           "firstname",
           "middlename",
           "lastname",
-          # "birthday",
+          "birthday",
           "race",
           "sex"
         ),
@@ -83,7 +83,7 @@ mod_simple_settings_ui <- function(id){
           "House Number",
           "Street Name",
           "City",
-          "Year of Birth"
+          "SSN"
         ),
         choiceValues = c(
           "firstname",
@@ -95,12 +95,13 @@ mod_simple_settings_ui <- function(id){
           "housenum",
           "streetname",
           "city",
-          "birthyear"
+          "SSN"
         ),
         selected = c(
           "firstname",
           "middlename",
           "lastname",
+          "birthday",
           "race",
           "sex"
         ),
@@ -133,7 +134,7 @@ mod_simple_settings_ui <- function(id){
           "House Number",
           "Street Name",
           "City",
-          "Year of Birth"
+          "SSN"
         ),
         choiceValues = c(
           "firstname",
@@ -145,7 +146,7 @@ mod_simple_settings_ui <- function(id){
           "housenum",
           "streetname",
           "city",
-          "birthyear"
+          "SSN"
         ),
         status = "primary",
         size = "sm",
@@ -176,7 +177,7 @@ mod_simple_settings_ui <- function(id){
           "House Number",
           "Street Name",
           "City",
-          "Year of Birth"
+          "SSN"
         ),
         choiceValues = c(
           "firstname",
@@ -188,10 +189,12 @@ mod_simple_settings_ui <- function(id){
           "housenum",
           "streetname",
           "city",
-          "birthyear"
+          "SSN"
         ),
         selected = c("firstname",
-                     "lastname"),
+                     "middlename",
+                     "lastname",
+                     "birthday"),
         status = "primary",
         size = "sm",
         justified = TRUE,
@@ -203,8 +206,8 @@ mod_simple_settings_ui <- function(id){
       column(
         width = 6,
         actionBttn(
-          inputId = ns("previous_imputation"),
-          label = "Previous: Impute Missing Gender ",
+          inputId = ns("previous_date_format"),
+          label = "Previous: Format Dates",
           style = "simple",
           color = "primary",
           icon = icon("arrow-left"),
@@ -242,8 +245,6 @@ mod_simple_settings_server <- function(id, state, parent){
     ns <- session$ns
 
     observe({
-
-
       state$matching_variables <- input$matching_variables
       state$string_matching <- input$string_matching
       state$numeric_matching <- input$numeric_matching
@@ -251,8 +252,8 @@ mod_simple_settings_server <- function(id, state, parent){
     })
 
     # Previous page button redirection
-    observeEvent(input$previous_imputation, {
-      updateTabItems(session = parent, "tabs", "imputation")
+    observeEvent(input$previous_date_format, {
+      updateTabItems(session = parent, "tabs", "date_format")
     })
 
     # Next page button redirection

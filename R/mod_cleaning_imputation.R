@@ -101,43 +101,42 @@ mod_cleaning_imputation_ui <- function(id){
         column(12, DT::dataTableOutput(ns('imputation_dfB'), width = "100%"))
       )
     )),
-    fluidRow(
-      column(
-        width = 6,
-        actionBttn(
-          inputId = ns("previous_date_format"),
-          label = "Previous: Format Dates",
-          style = "simple",
-          color = "primary",
-          icon = icon("arrow-left"),
-          size = "sm"
-        ),
-        align = "left",
-        style = "margin-bottom: 10px;",
-        style = "margin-top: -10px;"
-      ),
-      column(
-        width = 6,
-        actionBttn(
-          inputId = ns("next_simple_settings"),
-          label = "Next: Simple Match Settings",
-          style = "simple",
-          color = "primary",
-          icon = icon("arrow-right"),
-          size = "sm"
-        ),
-        align = "right",
-        style = "margin-bottom: 10px;",
-        style = "margin-top: -10px;"
-      ),
-      style = "margin-left: 0px;",
-      style = "margin-right: 0px;"
-    )
+    # fluidRow(
+      # column(
+      #   width = 6,
+      #   actionBttn(
+      #     inputId = ns("previous_date_format"),
+      #     label = "Previous: Format Dates",
+      #     style = "simple",
+      #     color = "primary",
+      #     icon = icon("arrow-left"),
+      #     size = "sm"
+      #   ),
+      #   align = "left",
+      #   style = "margin-bottom: 10px;",
+      #   style = "margin-top: -10px;"
+      # ),
+      # column(
+      #   width = 6,
+      #   actionBttn(
+      #     inputId = ns("next_simple_settings"),
+      #     label = "Next: Simple Match Settings",
+      #     style = "simple",
+      #     color = "primary",
+      #     icon = icon("arrow-right"),
+      #     size = "sm"
+      #   ),
+      #   align = "right",
+      #   style = "margin-bottom: 10px;",
+      #   style = "margin-top: -10px;"
+      # ),
+    #   style = "margin-left: 0px;",
+    #   style = "margin-right: 0px;"
+    # )
   )
 }
 
 #' cleaning_imputation Server Functions
-#' @import gender lubridate
 #' @noRd
 mod_cleaning_imputation_server <- function(id, state, parent){
   moduleServer( id, function(input, output, session){
@@ -153,6 +152,13 @@ mod_cleaning_imputation_server <- function(id, state, parent){
 
       req(state$dfA_cleaned_date)
 
+      if (!requireNamespace("gender", quietly = TRUE)) {
+        stop("Package 'gender' is required for gender imputation. Please install it.")
+      }
+      if (!requireNamespace("lubridate", quietly = TRUE)) {
+        stop("Package 'lubridate' is required for date manipulation. Please install it.")
+      }
+
       data <- state$dfA_cleaned_date
       # TODO Under development
       # TODO Adding imputation function here
@@ -161,7 +167,7 @@ mod_cleaning_imputation_server <- function(id, state, parent){
         for (i in 1:nrow(data)) {
           if (is.na(data$sex[i])) {
             data$sex[i] <-
-              gender(
+              gender::gender(
                 data$firstname[i],
                 method = method0,
                 years = lubridate::year(data$birthday[i])
@@ -183,6 +189,13 @@ mod_cleaning_imputation_server <- function(id, state, parent){
 
       req(state$dfB_cleaned_date)
 
+      if (!requireNamespace("gender", quietly = TRUE)) {
+        stop("Package 'gender' is required for gender imputation. Please install it.")
+      }
+      if (!requireNamespace("lubridate", quietly = TRUE)) {
+        stop("Package 'lubridate' is required for date manipulation. Please install it.")
+      }
+
       data <- state$dfB_cleaned_date
       # TODO Under development
       # TODO Adding imputation function here
@@ -193,7 +206,7 @@ mod_cleaning_imputation_server <- function(id, state, parent){
         for (i in 1:nrow(data)) {
           if (is.na(data$sex[i])) {
             data$sex[i] <-
-              gender(
+              gender::gender(
                 data$firstname[i],
                 method = method0,
                 years = lubridate::year(data$birthday[i])
@@ -217,7 +230,7 @@ mod_cleaning_imputation_server <- function(id, state, parent){
       extensions = 'Buttons',
       selection = "single",
       rownames = FALSE,
-      server = FALSE,
+      server = TRUE,
       options = list(
         autoWidth = FALSE,
         scrollX = TRUE,
@@ -245,7 +258,7 @@ mod_cleaning_imputation_server <- function(id, state, parent){
       extensions = 'Buttons',
       selection = "single",
       rownames = FALSE,
-      server = FALSE,
+      server = TRUE,
       options = list(
         autoWidth = FALSE,
         scrollX = TRUE,
@@ -268,14 +281,14 @@ mod_cleaning_imputation_server <- function(id, state, parent){
     )
 
     # Previous page button redirection
-    observeEvent(input$previous_date_format, {
-      updateTabItems(session = parent, "tabs", "date_format")
-    })
+    # observeEvent(input$previous_date_format, {
+    #   updateTabItems(session = parent, "tabs", "date_format")
+    # })
 
     # Next page button redirection
-    observeEvent(input$next_simple_settings, {
-      updateTabItems(session = parent, "tabs", "simple_settings")
-    })
+    # observeEvent(input$next_simple_settings, {
+    #   updateTabItems(session = parent, "tabs", "simple_settings")
+    # })
   })
 }
 

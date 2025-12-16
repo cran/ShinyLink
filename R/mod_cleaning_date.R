@@ -102,8 +102,8 @@ mod_cleaning_date_ui <- function(id){
       column(
         width = 6,
         actionBttn(
-          inputId = ns("next_imputation"),
-          label = "Next: Impute Missing Gender ",
+          inputId = ns("next_simple_settings"),
+          label = "Next: Simple Match Settings",
           style = "simple",
           color = "primary",
           icon = icon("arrow-right"),
@@ -121,7 +121,6 @@ mod_cleaning_date_ui <- function(id){
 
 #' cleaning_date Server Functions
 #' @importFrom utils head
-#' @import lubridate
 #' @noRd
 mod_cleaning_date_server <- function(id, state, parent){
   moduleServer( id, function(input, output, session){
@@ -152,6 +151,10 @@ mod_cleaning_date_server <- function(id, state, parent){
     date_dataset_a <- reactive({
 
       req(state$dfA_cleaned_gender)
+
+      if (!requireNamespace("lubridate", quietly = TRUE)) {
+        stop("Package 'lubridate' is required for date manipulation. Please install it.")
+      }
 
       data <- state$dfA_cleaned_gender
       # TODO Under development
@@ -184,6 +187,7 @@ mod_cleaning_date_server <- function(id, state, parent){
       # lubridate::dmy()
       # lubridate::dym()
       state$dfA_cleaned_date <- data # TODO Under development update state
+      state$state_dfA <- data
 
 
       return(data)
@@ -192,6 +196,10 @@ mod_cleaning_date_server <- function(id, state, parent){
     date_dataset_b <- reactive({
 
       req(state$dfB_cleaned_gender)
+
+      if (!requireNamespace("lubridate", quietly = TRUE)) {
+        stop("Package 'lubridate' is required for date manipulation. Please install it.")
+      }
 
       data <- state$dfB_cleaned_gender
       # TODO Under development
@@ -209,6 +217,7 @@ mod_cleaning_date_server <- function(id, state, parent){
       }
 
       state$dfB_cleaned_date <- data # TODO Under development update state
+      state$state_dfB <- data
 
       return(data)
     })
@@ -220,24 +229,20 @@ mod_cleaning_date_server <- function(id, state, parent){
       extensions = 'Buttons',
       selection = "single",
       rownames = FALSE,
-      server = FALSE,
+      server = TRUE,
       options = list(
         autoWidth = FALSE,
         scrollX = TRUE,
         lengthMenu = list(c(15, 20, 50,-1), c('default', '20', '50', 'All')),
         pageLength = 15,
         dom = 'Blfrtip',
-        buttons =
-          list(
-            "copy",
-            list(
-              extend = "collection"
-              ,
-              buttons = c("csv", "excel", "pdf")
-              ,
-              text = "Download"
-            )
-          )
+        buttons = list('copy', list(
+          extend = 'collection',
+          buttons = list(
+            list(extend = 'csv', filename = "Date formated Sample Data"),
+            list(extend = 'excel', filename = "Date formated Sample Data")),
+          text = 'Download'
+        ))
       ),
       class = 'compact hover row-border nowrap stripe'
     )
@@ -248,24 +253,20 @@ mod_cleaning_date_server <- function(id, state, parent){
       extensions = 'Buttons',
       selection = "single",
       rownames = FALSE,
-      server = FALSE,
+      server = TRUE,
       options = list(
         autoWidth = FALSE,
         scrollX = TRUE,
         lengthMenu = list(c(15, 20, 50,-1), c('default', '20', '50', 'All')),
         pageLength = 15,
         dom = 'Blfrtip',
-        buttons =
-          list(
-            "copy",
-            list(
-              extend = "collection"
-              ,
-              buttons = c("csv", "excel", "pdf")
-              ,
-              text = "Download"
-            )
-          )
+        buttons = list('copy', list(
+          extend = 'collection',
+          buttons = list(
+            list(extend = 'csv', filename = "Date formated Matching Data"),
+            list(extend = 'excel', filename = "Date formated Matching Data")),
+          text = 'Download'
+        ))
       ),
       class = 'compact hover row-border nowrap stripe'
     )
@@ -277,8 +278,8 @@ mod_cleaning_date_server <- function(id, state, parent){
     })
 
     # Next page button redirection
-    observeEvent(input$next_imputation, {
-      updateTabItems(session = parent, "tabs", "imputation")
+    observeEvent(input$next_simple_settings, {
+      updateTabItems(session = parent, "tabs", "simple_settings")
     })
   })
 }
